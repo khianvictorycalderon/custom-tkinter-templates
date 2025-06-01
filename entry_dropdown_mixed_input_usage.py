@@ -14,8 +14,8 @@ input_vars = {}
 input_fields = {
     "Name": "text_only",
     "Age":  "number",
+    "Email": "email",
     "Type": ["Excellent", "Good", "Fair"],
-    "Model": "text",
     "Agenda": "text",
     "Blah Blah": "number",
     "SKAFIASKFOSKFOASKOFA": "text",
@@ -23,14 +23,19 @@ input_fields = {
     "Gender": ["Male", "Female"]
 }
 
-create_entry_dropdown(app, input_fields, col_per_rows=2, input_bg_color="#CBE5F7", input_text_color="#151D41", variable=input_vars).pack(fill = BOTH)
-
-ctk.CTkButton(app, text = "Print value of name", command=lambda: print(input_vars["Name"].get())).pack()
-
 def print_all_values():
     for key, var in input_vars.items():
         print(f"{key}: {var.get()}")
 
-ctk.CTkButton(app, text="Print all values", command=print_all_values).pack()
+create_entry_dropdown(
+    app, 
+    input_fields, 
+    col_per_rows=2, 
+    input_bg_color="#CBE5F7",
+    input_text_color="#151D41",
+    variable=input_vars,
+    button_label="Print all data",
+    on_submit=print_all_values
+).pack(fill = BOTH)
 
 app.mainloop()

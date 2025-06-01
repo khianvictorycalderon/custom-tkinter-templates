@@ -1,7 +1,19 @@
 from tkinter import *
+from tkinter import messagebox
 import customtkinter as ctk
+import re
 
-def create_entry_dropdown(root, data, col_per_rows=1, label_color="white", input_bg_color="", input_text_color="", variable=None):
+def create_entry_dropdown(
+        root, 
+        data, 
+        col_per_rows=1, 
+        label_color="white", 
+        input_bg_color="", 
+        input_text_color="", 
+        variable=None, 
+        button_label="submit",
+        on_submit=None
+    ):
     content = ctk.CTkFrame(root, fg_color="transparent")
     content.grid_columnconfigure(tuple(range(col_per_rows)), weight=1)
 
@@ -134,5 +146,38 @@ def create_entry_dropdown(root, data, col_per_rows=1, label_color="white", input
         variable[key] = input_var
 
         column += 1
+
+    def internal_on_submit():
+        empty_fields = [key for key, var in variable.items() if var.get().strip() == ""]
+        if empty_fields:
+            messagebox.showerror(
+                "Validation Error", 
+                f"The following fields must not be empty:\n- " + "\n- ".join(empty_fields)
+            )
+            return
+
+        # Email validation regex (simple)
+        email_pattern = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
+
+        # Check all email fields
+        invalid_emails = []
+        for key, value_type in data.items():
+            if value_type == "email":
+                email_val = variable[key].get().strip()
+                if not email_pattern.match(email_val):
+                    invalid_emails.append(key)
+
+        if invalid_emails:
+            messagebox.showerror(
+                "Validation Error", 
+                f"The following email fields are invalid:\n- " + "\n- ".join(invalid_emails)
+            )
+            return
+
+        if on_submit is not None:
+            on_submit()
+
+    submit_button = ctk.CTkButton(content, text=button_label, command=internal_on_submit)
+    submit_button.grid(row=row + 1, column=0, columnspan=col_per_rows, pady=10)
 
     return content

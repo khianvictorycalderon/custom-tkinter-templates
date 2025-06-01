@@ -15,8 +15,8 @@ input_vars = {}
 input_fields = {
     "Name": "text_only",
     "Age":  "number",
+    "Email": "email",
     "Type": ["Excellent", "Good", "Fair"],
-    "Model": "text",
     "Agenda": "text",
     "Blah Blah": "number",
     "SKAFIASKFOSKFOASKOFA": "text",
@@ -27,16 +27,22 @@ input_fields = {
 # Content of the frames
 def sample_page(parent):
     frame = ctk.CTkFrame(parent, fg_color="transparent", corner_radius=0)
-    ed = create_entry_dropdown(frame, input_fields, col_per_rows=2, input_bg_color="#CBE5F7", input_text_color="#151D41", variable=input_vars)
-    ed.pack(fill="both", expand=True, padx=10, pady=10)
-
-    ctk.CTkButton(frame, text="Print value of name", command=lambda: print(input_vars["Name"].get())).pack(pady=5)
-
+    
     def print_all_values():
         for key, var in input_vars.items():
             print(f"{key}: {var.get()}")
-
-    ctk.CTkButton(frame, text="Print all values", command=print_all_values).pack(pady=5)
+    
+    create_entry_dropdown(
+        frame, 
+        input_fields, 
+        col_per_rows=2, 
+        input_bg_color="#CBE5F7",
+        input_text_color="#151D41",
+        variable=input_vars,
+        button_label="Print all data",
+        on_submit=print_all_values
+    ).pack(fill = BOTH, expand = True)
+    
     return frame
 
 frame_content = {
