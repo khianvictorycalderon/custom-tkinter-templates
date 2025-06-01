@@ -1,7 +1,15 @@
 import customtkinter as ctk
 from tkinter import *
 
-def create_text_section(root, title="Title", content_fn=None, text_color="white", bg_color="blue", line_color="#AAAAAA"):
+def create_text_section(
+        root, 
+        title="Title", 
+        content_fn=None, 
+        text_color="white", 
+        bg_color="blue", 
+        line_color="#AAAAAA",
+        title_font=("Segoe UI", 18)
+    ):
     content = ctk.CTkFrame(root, fg_color=bg_color, corner_radius=0)
     
     # Title label (aligned left)
@@ -10,6 +18,7 @@ def create_text_section(root, title="Title", content_fn=None, text_color="white"
         text=title,
         font=ctk.CTkFont(size=20, weight="bold"),
         text_color=text_color,
+        font=title_font,
         anchor="w"
     )
     title_label.pack(fill="x", padx=20, pady=(20, 5))
