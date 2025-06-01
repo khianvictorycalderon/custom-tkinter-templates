@@ -20,7 +20,8 @@ input_fields = {
     "Blah Blah": "number",
     "SKAFIASKFOSKFOASKOFA": "text",
     "Department": ["Department 1", "Department 2"],
-    "Gender": ["Male", "Female"]
+    "Gender": ["Male", "Female"],
+    "Password": "password"
 }
 
 def print_all_values():

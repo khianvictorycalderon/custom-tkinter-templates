@@ -136,6 +136,17 @@ def create_entry_dropdown(
                     var.set(new_val)
 
             input_var.trace_add("write", validate_text_only)
+            
+        elif value == "password":
+            input_var = ctk.StringVar()
+            input_widget = ctk.CTkEntry(
+                input_frame,
+                fg_color=input_bg_color,
+                font=default_font,
+                text_color=input_text_color,
+                textvariable=input_var,
+                show="*"
+            )
 
         elif value == "text":
             input_var = ctk.StringVar()
