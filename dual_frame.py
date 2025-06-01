@@ -1,0 +1,62 @@
+import customtkinter as ctk
+from tkinter import *
+
+def create_dual_frame(root, nav_dict, left_frame_bg_color="#2e2e2e", right_frame_bg_color="#3F3F3F", button_hover_color="blue", text_color="white", left_ratio=0.2):
+    content = ctk.CTkFrame(root)
+
+    left_frame = ctk.CTkScrollableFrame(content, fg_color=left_frame_bg_color, corner_radius=0)
+    left_frame.pack(side="left", fill="y")
+
+    right_frame = ctk.CTkScrollableFrame(content, fg_color=right_frame_bg_color, corner_radius=0)
+    right_frame.pack(side="right", fill="both", expand=True)
+
+    def clear_right_frame():
+        for widget in right_frame.winfo_children():
+            widget.destroy()
+
+    def show_content(content_fn):
+        clear_right_frame()
+        result = content_fn(right_frame)
+        if isinstance(result, ctk.CTkBaseClass) or hasattr(result, "pack"):
+            result.pack(fill="both", expand=True)
+
+
+    def on_resize(event):
+        new_width = event.width
+        left_frame_width = int(new_width * left_ratio)
+        left_frame.configure(width=left_frame_width)
+
+    content.bind("<Configure>", on_resize)
+
+    for section, buttons in nav_dict.items():
+        section_title = ctk.CTkLabel(
+            left_frame,
+            text=section,
+            text_color=text_color,
+            fg_color=left_frame_bg_color,
+            anchor="center",
+            font=ctk.CTkFont(size=14, weight="bold")
+        )
+        section_title.pack(fill="x", padx=10, pady=(20, 0))
+
+        divider = ctk.CTkFrame(
+            left_frame,
+            height=2,
+            fg_color="#AAAAAA"
+        )
+        divider.pack(fill="x", padx=10, pady=(2, 6))
+        
+        for btn_label, content_fn in buttons.items():
+            def handler(fn=content_fn):
+                show_content(fn)
+            btn = ctk.CTkButton(left_frame, text=btn_label, fg_color=left_frame_bg_color, text_color=text_color, hover=True, hover_color=button_hover_color, command=handler)
+            btn.pack(fill="x", padx=20, pady=2)    
+            
+    # Automatically show the first page
+    for section_buttons in nav_dict.values():
+        if section_buttons:
+            first_fn = next(iter(section_buttons.values()))
+            show_content(first_fn)
+            break        
+            
+    return content
