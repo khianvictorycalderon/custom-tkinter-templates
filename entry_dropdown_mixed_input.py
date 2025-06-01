@@ -61,7 +61,7 @@ def create_entry_dropdown(
 
         label = ctk.CTkLabel(
             input_frame, 
-            text=key, 
+            text=f"{key}:", 
             text_color=label_color, 
             anchor="e", 
             width=max_label_widths[column], 
