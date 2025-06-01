@@ -100,7 +100,17 @@ frame_content = {
     }
 }
 
+frame_content_no_divider = {
+    "Blogs": blog_page,
+    "Services": services_page,
+    "Products": products_page,
+    "Address": address_page,
+    "Phone Number": phone_page,
+    "Email": email_page
+}
+
 # Make sure the background color are dark for better UI
+# Either of the frame_content or frame_content_no_divider should work
 dual_frame = create_dual_frame(app, frame_content, left_frame_bg_color="#000a35", right_frame_bg_color="#001545", button_hover_color="#1b285f")
 dual_frame.pack(expand = True, fill = BOTH)
 
