@@ -115,25 +115,6 @@ def create_entry_dropdown(root, data, col_per_rows=1, label_color="white", input
 
             input_var.trace_add("write", validate_text_only)
 
-        elif value == "email":
-            input_var = ctk.StringVar()
-            input_widget = ctk.CTkEntry(input_frame, fg_color=input_bg_color, text_color=input_text_color,
-                                        width=input_width, textvariable=input_var)
-
-            def validate_email(*args, var=input_var):
-                val = var.get()
-                if val == "":
-                    return
-                allowed_chars = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-+@")
-                filtered = ''.join(c for c in val if c in allowed_chars)
-                if filtered.count('@') > 1:
-                    parts = filtered.split('@')
-                    filtered = parts[0] + '@' + ''.join(parts[1:]).replace('@', '')
-                if val != filtered:
-                    var.set(filtered)
-
-            input_var.trace_add("write", validate_email)
-
         elif value == "text":
             input_var = ctk.StringVar()
             input_widget = ctk.CTkEntry(input_frame, fg_color=input_bg_color, text_color=input_text_color,
