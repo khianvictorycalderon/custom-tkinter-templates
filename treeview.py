@@ -19,7 +19,7 @@ def create_treeview(
         data_bg_2="#242629",
         alternating_data_bg=True,
         row_height=50,
-        font=("Segoe UI", 14),
+        font=("Segoe UI", 13),
         
         # For the live search feature
         searchable=True,
