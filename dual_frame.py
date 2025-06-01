@@ -1,7 +1,16 @@
 import customtkinter as ctk
 from tkinter import *
 
-def create_dual_frame(root, nav_dict, left_frame_bg_color="#2e2e2e", right_frame_bg_color="#3F3F3F", button_hover_color="blue", text_color="white", left_ratio=0.2):
+def create_dual_frame(
+        root, 
+        nav_dict, 
+        left_frame_bg_color="#2e2e2e", 
+        right_frame_bg_color="#3F3F3F", 
+        button_hover_color="blue", 
+        text_color="white", 
+        left_ratio=0.2,
+        left_frame_font=("Segoe UI", 13) # Default for all Windows
+    ):
     content = ctk.CTkFrame(root)
 
     left_frame = ctk.CTkScrollableFrame(content, fg_color=left_frame_bg_color, corner_radius=0)
@@ -27,24 +36,32 @@ def create_dual_frame(root, nav_dict, left_frame_bg_color="#2e2e2e", right_frame
 
     content.bind("<Configure>", on_resize)
 
-    # Check if it's a flat dictionary or sectioned
     is_flat = all(callable(v) for v in nav_dict.values())
 
     if is_flat:
         for btn_label, content_fn in nav_dict.items():
             def handler(fn=content_fn):
                 show_content(fn)
-            btn = ctk.CTkButton(left_frame, text=btn_label, fg_color=left_frame_bg_color, text_color=text_color, hover=True, hover_color=button_hover_color, command=handler)
+            btn = ctk.CTkButton(
+                left_frame,
+                text=btn_label,
+                font=left_frame_font,
+                fg_color=left_frame_bg_color,
+                text_color=text_color,
+                hover=True,
+                hover_color=button_hover_color,
+                command=handler
+            )
             btn.pack(fill="x", padx=20, pady=2)
     else:
         for section, buttons in nav_dict.items():
             section_title = ctk.CTkLabel(
                 left_frame,
                 text=section,
+                font=ctk.CTkFont(family=left_frame_font[0], size=left_frame_font[1], weight="bold"),
                 text_color=text_color,
                 fg_color=left_frame_bg_color,
-                anchor="center",
-                font=ctk.CTkFont(size=14, weight="bold")
+                anchor="center"
             )
             section_title.pack(fill="x", padx=10, pady=(20, 0))
 
@@ -54,10 +71,18 @@ def create_dual_frame(root, nav_dict, left_frame_bg_color="#2e2e2e", right_frame
             for btn_label, content_fn in buttons.items():
                 def handler(fn=content_fn):
                     show_content(fn)
-                btn = ctk.CTkButton(left_frame, text=btn_label, fg_color=left_frame_bg_color, text_color=text_color, hover=True, hover_color=button_hover_color, command=handler)
+                btn = ctk.CTkButton(
+                    left_frame,
+                    text=btn_label,
+                    font=left_frame_font,
+                    fg_color=left_frame_bg_color,
+                    text_color=text_color,
+                    hover=True,
+                    hover_color=button_hover_color,
+                    command=handler
+                )
                 btn.pack(fill="x", padx=20, pady=2)
 
-    # Automatically show the first page
     if is_flat:
         first_fn = next(iter(nav_dict.values()))
         show_content(first_fn)
