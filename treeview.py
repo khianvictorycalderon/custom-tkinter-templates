@@ -4,22 +4,32 @@ from tkinter import ttk
 
 def create_treeview(
         root, 
+        
+        # Data & Columns
         columns=["Column_1", "Column_2"], 
-        col_width=300,
-        height=15,
         data=[
             ("row 1 column 1 data", "row 1 column 2 data"),
             ("row 2 column 1 data", "row 2 column 2 data")
         ],
-        col_bg="#2D2F33",
+        
+        # Sizes
+        column_width=300,
+        height=15,
+        
+        # General (Applies to all)
         content_bg="#1E1F23",
         text_color="#E4E6EB",
-        heading_text_color="#F5F6FA",
-        data_bg="#2A2C30",
-        data_bg_2="#242629",
-        alternating_data_bg=True,
-        row_height=50,
         font=("Segoe UI", 13),
+        
+        # Rows
+        alternate_row_bg=True,
+        row_a_bg="#2A2C30",
+        row_b_bg="#242629",
+        row_height=50,
+        
+        # Header
+        header_bg_color="#F5F6FA",
+        header_text_color="#F5F6FA",
         
         # For the live search feature
         searchable=True,
@@ -45,8 +55,8 @@ def create_treeview(
     )
     style.configure(
         "Custom.Treeview.Heading",
-        background=col_bg,
-        foreground=heading_text_color,
+        background=header_bg_color,
+        foreground=header_text_color,
         font=(font[0], font[1], "bold")
     )
 
@@ -93,17 +103,17 @@ def create_treeview(
     tree.column("#0", width=0, stretch=False)
     tree.heading("#0", text="")
 
-    tree.tag_configure("bg1", background=data_bg)
-    tree.tag_configure("bg2", background=data_bg_2)
+    tree.tag_configure("bg1", background=row_a_bg)
+    tree.tag_configure("bg2", background=row_b_bg)
 
     for item in columns:
-        tree.column(item, anchor=W, width=col_width)
+        tree.column(item, anchor=W, width=column_width)
         tree.heading(item, text=item, anchor=W)
 
     def populate_tree(filtered_data):
         tree.delete(*tree.get_children())
         for index, row in enumerate(filtered_data):
-            tag = "bg1" if not alternating_data_bg or index % 2 == 0 else "bg2"
+            tag = "bg1" if not alternate_row_bg or index % 2 == 0 else "bg2"
             tree.insert("", END, values=row, tags=(tag,))
 
     populate_tree(all_data)
