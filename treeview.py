@@ -28,7 +28,7 @@ def create_treeview(
         row_height=50,
         
         # Header
-        header_bg_color="#F5F6FA",
+        header_bg_color="#1E1F23",
         header_text_color="#F5F6FA",
         
         # For the live search feature
