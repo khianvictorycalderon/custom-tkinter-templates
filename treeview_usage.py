@@ -33,6 +33,6 @@ sample_data = [
     ("Daniel", 26, "Male", "Magnolia Lane")
 ]
 
-create_treeview(app, columns=sample_columns, data=sample_data, col_width=700).pack(fill = BOTH)
+create_treeview(app, columns=sample_columns, data=sample_data).pack(fill = BOTH)
 
 app.mainloop()
