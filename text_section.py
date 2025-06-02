@@ -16,7 +16,6 @@ def create_text_section(
     title_label = ctk.CTkLabel(
         content,
         text=title,
-        font=ctk.CTkFont(size=20, weight="bold"),
         text_color=text_color,
         font=title_font,
         anchor="w"
