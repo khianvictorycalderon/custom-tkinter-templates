@@ -39,7 +39,7 @@ sample_data = [
 # Content of the frames
 def sample_page(parent):
     frame = ctk.CTkFrame(parent, fg_color="transparent", corner_radius=0)
-    create_treeview(frame, columns=sample_columns, data=sample_data, col_width=700, alternating_data_bg=False).pack(fill = BOTH)
+    create_treeview(frame, columns=sample_columns, data=sample_data, column_width=700, alternate_row_bg=False).pack(fill = BOTH)
     return frame
 
 frame_content = {
