@@ -25,6 +25,7 @@ def create_dual_frame(
 
     def show_content(content_fn):
         clear_right_frame()
+        right_frame._parent_canvas.yview_moveto(0)  # Reset scroll to top
         result = content_fn(right_frame)
         if isinstance(result, ctk.CTkBaseClass) or hasattr(result, "pack"):
             result.pack(fill="both", expand=True)
