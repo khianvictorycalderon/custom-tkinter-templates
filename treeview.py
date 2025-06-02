@@ -25,7 +25,11 @@ def create_treeview(
         searchable=True,
         search_label="Search for: ",
         search_box_bg_color="white",
-        search_box_text_color="black"
+        search_box_text_color="black",
+        
+        # Dropdown
+        dropdown_bg_color="white",
+        dropdown_text_color="black"
     ):
 
     style = ttk.Style()
@@ -47,6 +51,9 @@ def create_treeview(
     )
 
     content = ctk.CTkFrame(root, corner_radius=0, fg_color=content_bg)
+    
+    # Store all data to support filtering
+    all_data = list(data)
 
     # Search area
     if searchable:
@@ -63,9 +70,13 @@ def create_treeview(
         in_label = ctk.CTkLabel(search_frame, text="in", text_color=text_color, font=font)
         in_label.pack(side=LEFT, padx=(0,5))
 
-        combo = ctk.CTkComboBox(search_frame, values=columns, font=font, state="readonly")
+        combo = ctk.CTkComboBox(search_frame, values=columns, font=font, state="readonly", fg_color=dropdown_bg_color, text_color=dropdown_text_color)
         combo.set(columns[0])
         combo.pack(side=LEFT, padx=5)
+        
+        # Search result label:
+        results_label = ctk.CTkLabel(search_frame, text=f"{len(all_data)} rows", text_color=text_color, font=font)
+        results_label.pack(side=LEFT, padx=(10, 0))
 
         search_frame.pack(fill=X, pady=(15, 15), padx=5)
 
@@ -76,7 +87,6 @@ def create_treeview(
             search_entry.configure(width=char_width)
 
         content.bind("<Configure>", update_entry_width)
-
 
     # Treeview
     tree = ttk.Treeview(content, columns=columns, height=height, style="Custom.Treeview")
@@ -90,9 +100,6 @@ def create_treeview(
         tree.column(item, anchor=W, width=col_width)
         tree.heading(item, text=item, anchor=W)
 
-    # Store all data to support filtering
-    all_data = list(data)
-
     def populate_tree(filtered_data):
         tree.delete(*tree.get_children())
         for index, row in enumerate(filtered_data):
@@ -105,10 +112,17 @@ def create_treeview(
         def on_search(*args):
             query = search_var.get().lower()
             col_index = columns.index(combo.get())
-            filtered = [row for row in all_data if query in str(row[col_index]).lower()]
-            populate_tree(filtered)
+
+            if query:
+                filtered = [row for row in all_data if query in str(row[col_index]).lower()]
+                populate_tree(filtered)
+                results_label.configure(text=f"{len(filtered)} result{'s' if len(filtered) != 1 else ''}")
+            else:
+                populate_tree(all_data)
+                results_label.configure(text=f"{len(all_data)} row{'s' if len(all_data) != 1 else ''}")
 
         search_var.trace_add("write", on_search)
+        on_search()
 
     vsb = Scrollbar(content, orient=VERTICAL, command=tree.yview)
     hsb = Scrollbar(content, orient=HORIZONTAL, command=tree.xview)
