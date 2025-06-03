@@ -16,10 +16,12 @@ sample_list = ArrayVar(value=[
     ["Paul", "Walker"]
 ])
 
+headers = ["Name", "Last Name", "Address 1", "Address 2", "Address 3"]
+
 def my_save_callback(data):
     for row in data:
         print(row, ",")
 
-create_editable_list(app, data_var=sample_list, column_per_rows=5, on_save=my_save_callback).pack(expand=True, fill=BOTH)
+create_editable_list(app, headers=headers, data_var=sample_list, column_per_rows=5, on_save=my_save_callback).pack(expand=True, fill=BOTH)
 
 app.mainloop()
