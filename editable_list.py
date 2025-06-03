@@ -38,7 +38,7 @@ def create_editable_list(
         entry_text_color="#000000",
         on_save=None,
     ):
-    container = ctk.CTkFrame(root, fg_color=content_bg)
+    container = ctk.CTkFrame(root, fg_color=content_bg, corner_radius=0)
     original_data = []
 
     # Configure main grid columns for entries + delete button column
