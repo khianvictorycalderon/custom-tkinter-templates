@@ -18,6 +18,8 @@ sample_list = ArrayVar(value=[
     ["Jane", 16, "United States"]
 ])
 
+headers = ["Name", "Last Name", "Address 1"]
+
 def my_save_callback(data):
     for row in data:
         print(row, ",")
@@ -25,7 +27,7 @@ def my_save_callback(data):
 # Content of the frames
 def sample_page(parent):
     frame = ctk.CTkFrame(parent, fg_color="transparent", corner_radius=0)
-    create_editable_list(frame, data_var=sample_list, column_per_rows=3, on_save=my_save_callback).pack(expand=True, fill=BOTH)
+    create_editable_list(frame, headers=headers, data_var=sample_list, column_per_rows=3, on_save=my_save_callback).pack(expand=True, fill=BOTH)
     return frame
 
 frame_content = {
