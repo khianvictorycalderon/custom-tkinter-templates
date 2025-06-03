@@ -30,18 +30,19 @@ class ArrayVar(tk.Variable):
 
 def create_editable_list(
         root,
+        headers,
         data_var: ArrayVar,
         column_per_rows=1,
         font=("Segoe UI", 13),
         content_bg="#292929",
         entry_bg_color="#FFFFFF",
         entry_text_color="#000000",
+        headers_text_color="white",
         on_save=None,
     ):
     container = ctk.CTkFrame(root, fg_color=content_bg, corner_radius=0)
     original_data = []
 
-    # Configure main grid columns for entries + delete button column
     for col in range(column_per_rows):
         container.grid_columnconfigure(col, weight=1)
     container.grid_columnconfigure(column_per_rows, weight=0)
@@ -49,13 +50,23 @@ def create_editable_list(
     rows = []
     editing = tk.BooleanVar(value=False)
 
-    # Separate frame for buttons
     buttons_frame = ctk.CTkFrame(container, fg_color=content_bg)
     buttons_frame.grid_columnconfigure(0, weight=1)
     buttons_frame.grid_columnconfigure(1, weight=1)
 
+    # Add headers above the editable rows
+    for col_index, header in enumerate(headers):
+        header_label = ctk.CTkLabel(
+            container,
+            text=header,
+            text_color=headers_text_color,
+            font=font,
+            anchor="w"
+        )
+        header_label.grid(row=0, column=col_index, padx=(10 if col_index == 0 else 5, 5), pady=(10, 5), sticky="w")
+    ctk.CTkLabel(container, text="", fg_color=content_bg).grid(row=0, column=column_per_rows, padx=(5, 10), pady=(10, 5))
+
     def refresh_list():
-        # Clear old widgets
         for row in rows:
             for entry in row["entries"]:
                 entry.destroy()
@@ -67,7 +78,6 @@ def create_editable_list(
         for i, row_vals in enumerate(values):
             add_row(row_vals, index=i)
 
-        # Only add blank row for new entry when editing
         if editing.get():
             add_row([""] * column_per_rows, index=len(values), is_new=True)
 
@@ -80,11 +90,11 @@ def create_editable_list(
                 has_content = any(entry.get().strip() for entry in row["entries"])
                 if has_content:
                     row["is_new"] = False
-                    row["delete"].grid()  # Show delete button now that it's valid
+                    row["delete"].grid()
                     add_row([""] * column_per_rows, index=len(rows), is_new=True)
                     break
                 else:
-                    row["delete"].grid_remove()  # Always hide if still empty
+                    row["delete"].grid_remove()
 
     def add_row(values, index=None, is_new=False):
         entries = []
@@ -105,7 +115,7 @@ def create_editable_list(
                 entry.insert(0, "")
             if not editing.get() and not is_new:
                 entry.configure(state="readonly")
-            entry.grid(row=index, column=col, padx=(10 if col == 0 else 5, 5), pady=5, sticky="ew")
+            entry.grid(row=index + 1, column=col, padx=(10 if col == 0 else 5, 5), pady=5, sticky="ew")
             entry.bind("<KeyRelease>", on_change)
             entries.append(entry)
 
@@ -120,12 +130,8 @@ def create_editable_list(
             corner_radius=6,
             command=lambda r=len(rows): delete_row_by_row_index(r)
         )
-        delete_btn.grid(row=index, column=column_per_rows, padx=(5, 10), pady=5, sticky="ew")
+        delete_btn.grid(row=index + 1, column=column_per_rows, padx=(5, 10), pady=5, sticky="ew")
         if not editing.get() or is_new:
-            delete_btn.grid_remove()
-
-        # Hide delete button if not editing
-        if not editing.get():
             delete_btn.grid_remove()
 
         rows.append({
@@ -145,18 +151,15 @@ def create_editable_list(
 
         if editing.get():
             if row_index >= len(data_var.get()):
-                # Unsaved row
                 for entry in row["entries"]:
                     entry.destroy()
                 row["delete"].destroy()
                 rows.pop(row_index)
-                # Re-grid all rows from this point
                 for i in range(row_index, len(rows)):
                     for j, entry in enumerate(rows[i]["entries"]):
-                        entry.grid(row=i, column=j)
-                    rows[i]["delete"].grid(row=i, column=column_per_rows)
+                        entry.grid(row=i + 1, column=j)
+                    rows[i]["delete"].grid(row=i + 1, column=column_per_rows)
             else:
-                # Saved row
                 current = data_var.get()
                 current.pop(row_index)
                 data_var.set(current)
@@ -165,18 +168,16 @@ def create_editable_list(
     def enable_edit():
         original_data.clear()
         original_data.extend(data_var.get())
-        editing.set(True)  # Set editing = True first
-        refresh_list()    # Refresh list now that editing=True
+        editing.set(True)
+        refresh_list()
         for row in rows:
             if not row["is_new"]:
                 for entry in row["entries"]:
                     entry.configure(state="normal")
-                # Show delete button
                 row["delete"].grid()
         edit_btn.grid_forget()
         save_btn.grid(row=999, column=0, padx=10, pady=10, sticky="ew")
         cancel_btn.grid(row=999, column=1, padx=10, pady=10, sticky="ew")
-
 
     def save_changes():
         values = []
@@ -234,10 +235,7 @@ def create_editable_list(
 
     refresh_list()
 
-    # Place the buttons_frame below the main content
     buttons_frame.grid(row=999, column=0, columnspan=column_per_rows + 1, sticky="ew")
-
-    # Initially show only the Edit button spanning two columns
     edit_btn.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
 
     return container
