@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import os
+import webbrowser  # Ensure this is imported at the top
 
 def create_flex_text(
         root, 
@@ -65,7 +66,15 @@ def create_flex_text(
                                  font=subtitle_font, anchor="w").pack(anchor="w")
         else:
             for item in section_data:
-                ctk.CTkLabel(section_frame, text=str(item), text_color=text_color,
-                             font=subtitle_font, anchor="w").pack(anchor="w")
+                item_str = str(item)
+                if item_str.startswith("http://") or item_str.startswith("https://"):
+                    link_label = ctk.CTkLabel(section_frame, text=item_str, text_color="skyblue",
+                                            font=subtitle_font, anchor="w", cursor="hand2")
+                    link_label.pack(anchor="w")
+
+                    link_label.bind("<Button-1>", lambda e, url=item_str: webbrowser.open(url))
+                else:
+                    ctk.CTkLabel(section_frame, text=item_str, text_color=text_color,
+                                font=subtitle_font, anchor="w").pack(anchor="w")
 
     return container
