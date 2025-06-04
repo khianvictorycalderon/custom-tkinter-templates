@@ -23,6 +23,7 @@ data = {
     ],
     "legal2": [
         "BreadCo Artisan Bakery Ltd.", "Terms and Conditions · Privacy Policy"
+        "https://google.com1"
     ]
 }
 
