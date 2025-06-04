@@ -23,7 +23,9 @@ data = {
     ],
     "legal2": [
         "BreadCo Artisan Bakery Ltd.", "Terms and Conditions · Privacy Policy"
-        "https://google.com1"
+    ],
+    "Clickable Link": [
+        "https://google.com/", "https://youtube.com/"
     ]
 }
 
