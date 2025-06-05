@@ -68,7 +68,7 @@ def create_entry_dropdown_multiple_buttons(
         if isinstance(value, list):
             input_var.set(value[0])
             input_widget = ctk.CTkOptionMenu(input_frame, variable=input_var, values=value, font=default_font,
-                                             fg_color=input_bg_color, text_color=input_text_color)
+                                             fg_color=input_bg_color, text_color=input_text_color, button_color=input_bg_color, button_hover_color=input_bg_color)
         elif value == "number":
             input_widget = ctk.CTkEntry(input_frame, fg_color=input_bg_color, font=default_font,
                                         text_color=input_text_color, textvariable=input_var)
