@@ -14,6 +14,7 @@ def create_treeview(
         
         # Sizes
         column_width=300,
+        action_button_column_width=100,
         height=15,
         
         # General (Applies to all)
@@ -39,7 +40,10 @@ def create_treeview(
         
         # Dropdown
         dropdown_bg_color="white",
-        dropdown_text_color="black"
+        dropdown_text_color="black",
+
+        # Action Buttons as dict with {column_name: {emoji: callback}}
+        action_buttons=None,
     ):
 
     style = ttk.Style()
@@ -64,7 +68,11 @@ def create_treeview(
     
     all_data = list(data)
 
-    # Treeview setup
+    # If action_buttons, extend columns with those button columns
+    if action_buttons:
+        action_cols = list(action_buttons.keys())
+        columns = action_cols + columns  # prepend button columns
+
     tree = ttk.Treeview(content, columns=columns, height=height, style="Custom.Treeview")
     tree.column("#0", width=0, stretch=False)
     tree.heading("#0", text="")
@@ -72,27 +80,83 @@ def create_treeview(
     tree.tag_configure("bg1", background=row_a_bg)
     tree.tag_configure("bg2", background=row_b_bg)
 
-    for item in columns:
-        tree.column(item, anchor=W, width=column_width)
-        tree.heading(item, text=item, anchor=W)
+    # Configure columns width
+    for col in columns:
+        if action_buttons and col in action_buttons:
+            tree.column(col, anchor=CENTER, width=action_button_column_width, stretch=False)
+        else:
+            tree.column(col, anchor=W, width=column_width)
+        tree.heading(col, text=col, anchor=W)
 
     def populate_tree(filtered_data):
         tree.delete(*tree.get_children())
         for index, row in enumerate(filtered_data):
             tag = "bg1" if not alternate_row_bg or index % 2 == 0 else "bg2"
-            tree.insert("", END, values=row, tags=(tag,))
+
+            # Build row values:
+            # For each action button column, place the emoji label
+            action_cells = []
+            if action_buttons:
+                for col_name, emoji_callback in action_buttons.items():
+                    emoji = list(emoji_callback.keys())[0]  # get emoji string
+                    action_cells.append(emoji)
+
+            full_row = tuple(action_cells) + tuple(row)
+            tree.insert("", END, values=full_row, tags=(tag,))
 
     populate_tree(all_data)
 
+    if action_buttons:
+        def on_tree_click(event):
+            region = tree.identify("region", event.x, event.y)
+            if region != "cell":
+                return
+            
+            col_id = tree.identify_column(event.x)  # e.g. "#1", "#2", ...
+            col_index = int(col_id.replace("#","")) - 1  # zero-based index
+            
+            row_id = tree.identify_row(event.y)
+            if not row_id:
+                return
+            
+            item = tree.item(row_id)
+            values = item.get("values")
+            if not values:
+                return
+            
+            # If clicked column is in action_buttons columns:
+            if col_index < len(action_buttons):
+                # Get the button column name by index
+                button_col_name = list(action_buttons.keys())[col_index]
+                emoji_callback = action_buttons[button_col_name]
+                callback = list(emoji_callback.values())[0]
+                
+                # Pass the rest of the data row (after the action columns)
+                data_row = values[len(action_buttons):]
+                callback(data_row)
+
+        tree.bind("<Button-1>", on_tree_click)
+
+        # Change cursor to hand pointer when hovering action buttons
+        def on_tree_motion(event):
+            region = tree.identify("region", event.x, event.y)
+            col_id = tree.identify_column(event.x)
+            col_index = int(col_id.replace("#","")) - 1
+            if region == "cell" and col_index < len(action_buttons):
+                tree.configure(cursor="hand2")
+            else:
+                tree.configure(cursor="")
+
+        tree.bind("<Motion>", on_tree_motion)
+
+    # --- Search Feature ---
     if searchable:
         search_frame = ctk.CTkFrame(content, fg_color=content_bg)
 
-        # Variables
         search_var = StringVar()
         case_sensitive = BooleanVar()
         exact_match = BooleanVar()
 
-        # Left controls frame for search label, entry, dropdown, checkboxes
         search_controls = ctk.CTkFrame(search_frame, fg_color=content_bg)
         
         search_label_widget = ctk.CTkLabel(search_controls, text=search_label, text_color=text_color, font=font)
@@ -105,17 +169,21 @@ def create_treeview(
         in_label = ctk.CTkLabel(search_controls, text="in", text_color=text_color, font=font)
         in_label.pack(side=LEFT, padx=(0, 5))
 
-        combo_var = StringVar(value=columns[0])
-        combo = ctk.CTkOptionMenu(search_controls, values=columns, font=font, state="readonly",
+        # Filter out action button columns from search dropdown
+        searchable_columns = columns[len(action_buttons):] if action_buttons else columns
+        combo_var = StringVar(value=searchable_columns[0])
+        combo = ctk.CTkOptionMenu(search_controls, values=searchable_columns, font=font, state="readonly",
                                 variable=combo_var,
                                 fg_color=dropdown_bg_color, text_color=dropdown_text_color,
                                 button_color=dropdown_bg_color, button_hover_color=dropdown_bg_color)
         combo.pack(side=LEFT, padx=5)
 
-        # Define on_search here so it can access populate_tree
         def on_search(*args):
             query = search_var.get()
-            col_index = columns.index(combo.get())
+            col_name = combo.get()
+            col_index = columns.index(col_name)
+            # Adjust index for filtering in all_data (which has no action columns)
+            data_col_index = col_index - (len(action_buttons) if action_buttons else 0)
             is_case_sensitive = case_sensitive.get()
             is_exact = exact_match.get()
 
@@ -127,7 +195,7 @@ def create_treeview(
                     val = value if is_case_sensitive else str(value).lower()
                     return val == query if is_exact else query in val
 
-                filtered = [row for row in all_data if match(row[col_index])]
+                filtered = [row for row in all_data if match(row[data_col_index])]
                 populate_tree(filtered)
                 results_label.configure(text=f"{len(filtered)} result{'s' if len(filtered) != 1 else ''}")
             else:
@@ -144,7 +212,6 @@ def create_treeview(
 
         search_controls.pack(side=LEFT, padx=(5, 0))
         
-        # Bind combo variable change to refresh search
         combo_var.trace_add("write", on_search)
 
         results_label = ctk.CTkLabel(search_frame, text=f"{len(all_data)} rows", text_color=text_color, font=font)
@@ -162,6 +229,7 @@ def create_treeview(
 
         content.bind("<Configure>", update_entry_width)
 
+    # Scrollbars
     vsb = Scrollbar(content, orient=VERTICAL, command=tree.yview)
     hsb = Scrollbar(content, orient=HORIZONTAL, command=tree.xview)
     tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)

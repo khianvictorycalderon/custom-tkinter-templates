@@ -33,6 +33,21 @@ sample_data = [
     ["Daniel", 26, "Male", "Magnolia Lane"]
 ]
 
-create_treeview(app, columns=sample_columns, data=sample_data).pack(fill = BOTH)
+def copy_id(data):
+    print("Copy ID:", data[0])  # first column of the row
+
+def delete_item(data):
+    print("Delete:", data)
+
+buttons = {
+    "Copy ID": {
+        "📜": copy_id
+    },
+    "Delete Item": {
+        "⛔": delete_item
+    }
+}
+
+create_treeview(app, action_buttons=buttons, columns=sample_columns, data=sample_data).pack(fill = BOTH)
 
 app.mainloop()

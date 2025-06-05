@@ -38,8 +38,23 @@ sample_data = [
 
 # Content of the frames
 def sample_page(parent):
+    def copy_id(data):
+        print("Copy ID:", data[0])  # first column of the row
+
+    def delete_item(data):
+        print("Delete:", data)
+
+    buttons = {
+        "Copy ID": {
+            "📜": copy_id
+        },
+        "Delete Item": {
+            "⛔": delete_item
+        }
+    }
+    
     frame = ctk.CTkFrame(parent, fg_color="transparent", corner_radius=0)
-    create_treeview(frame, columns=sample_columns, data=sample_data, column_width=700, alternate_row_bg=False).pack(fill = BOTH)
+    create_treeview(frame, action_buttons=buttons, columns=sample_columns, data=sample_data, column_width=700, alternate_row_bg=False).pack(fill = BOTH)
     return frame
 
 frame_content = {
