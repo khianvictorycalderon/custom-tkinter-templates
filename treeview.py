@@ -80,7 +80,7 @@ def create_treeview(
         in_label = ctk.CTkLabel(search_frame, text="in", text_color=text_color, font=font)
         in_label.pack(side=LEFT, padx=(0,5))
 
-        combo = ctk.CTkComboBox(search_frame, values=columns, font=font, state="readonly", fg_color=dropdown_bg_color, text_color=dropdown_text_color)
+        combo = ctk.CTkOptionMenu(search_frame, values=columns, font=font, state="readonly", fg_color=dropdown_bg_color, text_color=dropdown_text_color, button_color=dropdown_bg_color, button_hover_color=dropdown_bg_color)
         combo.set(columns[0])
         combo.pack(side=LEFT, padx=5)
         
