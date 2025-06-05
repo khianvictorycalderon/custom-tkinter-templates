@@ -1,7 +1,7 @@
 from tkinter import *
 import customtkinter as ctk
 from dual_frame import create_dual_frame
-from editable_list import create_editable_list, ArrayVar
+from editable_list import create_editable_list
 
 # Size templates
 app = ctk.CTk()
@@ -11,23 +11,29 @@ app.geometry(f"{screen_width}x{screen_height}+0+0")
 app.update()
 app.state("zoomed")
 
-sample_list = ArrayVar(value=[
-    ["John", 17, "Brook Street"],
-    ["Jake", 18, "Venezuela"],
-    ["Paul", 21, "Russia"],
-    ["Jane", 16, "United States"]
-])
+columns = {
+    "Name": "text",
+    "Last Name": "text",
+    "Address": "text",
+    "Age": "number_positive",
+    "Weight": "number",
+    "Department": ["Department 1", "Department 2"]
+}
 
-headers = ["Name", "Last Name", "Address 1"]
+sample_list = [
+    ["John", "Doe", "Street 123", "25", "70", "Department 1"],
+    ["Jake", "Zyrus", "Street 456", "30", "80", "Department 2"]
+]
 
-def my_save_callback(data):
-    for row in data:
-        print(row, ",")
+def my_save_callback(_):
+    print() # New Empty Line
+    for row in sample_list:
+        print(row)
 
 # Content of the frames
 def sample_page(parent):
     frame = ctk.CTkFrame(parent, fg_color="transparent", corner_radius=0)
-    create_editable_list(frame, headers=headers, data_var=sample_list, column_per_rows=3, on_save=my_save_callback).pack(expand=True, fill=BOTH)
+    create_editable_list(frame, columns=columns, data_list=sample_list, on_save=my_save_callback).pack(expand=True, fill=BOTH)
     return frame
 
 frame_content = {
