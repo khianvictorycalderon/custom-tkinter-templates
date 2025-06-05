@@ -62,43 +62,9 @@ def create_treeview(
 
     content = ctk.CTkFrame(root, corner_radius=0, fg_color=content_bg)
     
-    # Store all data to support filtering
     all_data = list(data)
 
-    # Search area
-    if searchable:
-        search_frame = ctk.CTkFrame(content, fg_color=content_bg)
-
-        search_label_widget = ctk.CTkLabel(search_frame, text=search_label, text_color=text_color, font=font)
-        search_label_widget.pack(side=LEFT, padx=(5, 0))
-
-        search_var = StringVar()
-        search_entry = ctk.CTkEntry(search_frame, textvariable=search_var, font=font)
-        search_entry.configure(fg_color=search_box_bg_color, text_color=search_box_text_color)
-        search_entry.pack(side=LEFT, padx=5)
-
-        in_label = ctk.CTkLabel(search_frame, text="in", text_color=text_color, font=font)
-        in_label.pack(side=LEFT, padx=(0,5))
-
-        combo = ctk.CTkOptionMenu(search_frame, values=columns, font=font, state="readonly", fg_color=dropdown_bg_color, text_color=dropdown_text_color, button_color=dropdown_bg_color, button_hover_color=dropdown_bg_color)
-        combo.set(columns[0])
-        combo.pack(side=LEFT, padx=5)
-        
-        # Search result label:
-        results_label = ctk.CTkLabel(search_frame, text=f"{len(all_data)} rows", text_color=text_color, font=font)
-        results_label.pack(side=LEFT, padx=(10, 0))
-
-        search_frame.pack(fill=X, pady=(15, 15), padx=5)
-
-        # Bind to update width dynamically:
-        def update_entry_width(event):
-            window_width = event.width
-            char_width = max(10, int((window_width * 0.5) / 2))
-            search_entry.configure(width=char_width)
-
-        content.bind("<Configure>", update_entry_width)
-
-    # Treeview
+    # Treeview setup
     tree = ttk.Treeview(content, columns=columns, height=height, style="Custom.Treeview")
     tree.column("#0", width=0, stretch=False)
     tree.heading("#0", text="")
@@ -119,20 +85,82 @@ def create_treeview(
     populate_tree(all_data)
 
     if searchable:
+        search_frame = ctk.CTkFrame(content, fg_color=content_bg)
+
+        # Variables
+        search_var = StringVar()
+        case_sensitive = BooleanVar()
+        exact_match = BooleanVar()
+
+        # Left controls frame for search label, entry, dropdown, checkboxes
+        search_controls = ctk.CTkFrame(search_frame, fg_color=content_bg)
+        
+        search_label_widget = ctk.CTkLabel(search_controls, text=search_label, text_color=text_color, font=font)
+        search_label_widget.pack(side=LEFT, padx=(5, 0))
+
+        search_entry = ctk.CTkEntry(search_controls, textvariable=search_var, font=font)
+        search_entry.configure(fg_color=search_box_bg_color, text_color=search_box_text_color)
+        search_entry.pack(side=LEFT, padx=5)
+
+        in_label = ctk.CTkLabel(search_controls, text="in", text_color=text_color, font=font)
+        in_label.pack(side=LEFT, padx=(0, 5))
+
+        combo_var = StringVar(value=columns[0])
+        combo = ctk.CTkOptionMenu(search_controls, values=columns, font=font, state="readonly",
+                                variable=combo_var,
+                                fg_color=dropdown_bg_color, text_color=dropdown_text_color,
+                                button_color=dropdown_bg_color, button_hover_color=dropdown_bg_color)
+        combo.pack(side=LEFT, padx=5)
+
+        # Define on_search here so it can access populate_tree
         def on_search(*args):
-            query = search_var.get().lower()
+            query = search_var.get()
             col_index = columns.index(combo.get())
+            is_case_sensitive = case_sensitive.get()
+            is_exact = exact_match.get()
+
+            if not is_case_sensitive:
+                query = query.lower()
 
             if query:
-                filtered = [row for row in all_data if query in str(row[col_index]).lower()]
+                def match(value):
+                    val = value if is_case_sensitive else str(value).lower()
+                    return val == query if is_exact else query in val
+
+                filtered = [row for row in all_data if match(row[col_index])]
                 populate_tree(filtered)
                 results_label.configure(text=f"{len(filtered)} result{'s' if len(filtered) != 1 else ''}")
             else:
                 populate_tree(all_data)
                 results_label.configure(text=f"{len(all_data)} row{'s' if len(all_data) != 1 else ''}")
 
+        case_checkbox = ctk.CTkCheckBox(search_controls, text="Case-Sensitive", variable=case_sensitive, 
+                                        text_color=text_color, font=font, command=on_search)
+        case_checkbox.pack(side=LEFT, padx=(10, 0))
+
+        whole_word_checkbox = ctk.CTkCheckBox(search_controls, text="Whole Word Only", variable=exact_match, 
+                                         text_color=text_color, font=font, command=on_search)
+        whole_word_checkbox.pack(side=LEFT, padx=(10, 0))
+
+        search_controls.pack(side=LEFT, padx=(5, 0))
+        
+        # Bind combo variable change to refresh search
+        combo_var.trace_add("write", on_search)
+
+        results_label = ctk.CTkLabel(search_frame, text=f"{len(all_data)} rows", text_color=text_color, font=font)
+        results_label.pack(side=RIGHT, padx=(0, 10))
+
+        search_frame.pack(fill=X, pady=(15, 15), padx=5)
+
         search_var.trace_add("write", on_search)
         on_search()
+
+        def update_entry_width(event):
+            window_width = event.width
+            char_width = max(10, int((window_width * 0.5) / 2))
+            search_entry.configure(width=char_width)
+
+        content.bind("<Configure>", update_entry_width)
 
     vsb = Scrollbar(content, orient=VERTICAL, command=tree.yview)
     hsb = Scrollbar(content, orient=HORIZONTAL, command=tree.xview)
