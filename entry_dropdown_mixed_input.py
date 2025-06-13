@@ -11,6 +11,8 @@ def create_entry_dropdown(
         input_bg_color="white", 
         input_text_color="black", 
         variable=None, 
+        button_color="Blue",
+        button_hover_color="Blue",
         button_label="submit",
         on_submit=None,
         default_font=("Segoe UI", 13)
@@ -195,7 +197,7 @@ def create_entry_dropdown(
         if on_submit is not None:
             on_submit()
 
-    submit_button = ctk.CTkButton(content, text=button_label,  font=default_font, command=internal_on_submit)
+    submit_button = ctk.CTkButton(content, text=button_label,  fg_color=button_color, hover_color=button_hover_color, font=default_font, command=internal_on_submit)
     submit_button.grid(row=row + 1, column=0, columnspan=col_per_rows, pady=10)
 
     return content

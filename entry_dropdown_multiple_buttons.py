@@ -9,6 +9,8 @@ def create_entry_dropdown_multiple_buttons(
         input_bg_color="white",
         input_text_color="black",
         variable=None,
+        buttons_color="Blue",
+        buttons_hover_color="Blue",
         buttons=None,
         default_font=("Segoe UI", 13)
     ):
@@ -126,7 +128,7 @@ def create_entry_dropdown_multiple_buttons(
 
     if isinstance(buttons, dict):
         for btn_text, action in buttons.items():
-            btn = ctk.CTkButton(button_frame, text=btn_text, font=default_font, command=action)
+            btn = ctk.CTkButton(button_frame, fg_color=buttons_color, hover_color=buttons_hover_color, text=btn_text, font=default_font, command=action)
             btn.pack(side=LEFT, padx=5)
 
     return content
