@@ -1,7 +1,7 @@
 from tkinter import *
 import customtkinter as ctk
-from dual_frame import create_dual_frame
-from entry_dropdown_mixed_input import create_entry_dropdown
+from ctk_temp_dual_frame import create_dual_frame
+from ctk_temp_entry_dropdown_mixed_input import create_entry_dropdown
 
 # Size templates
 app = ctk.CTk()

@@ -1,7 +1,7 @@
 from tkinter import *
 import customtkinter as ctk
-from dual_frame import create_dual_frame
-from editable_list import create_editable_list
+from ctk_temp_dual_frame import create_dual_frame
+from ctk_temp_editable_list import create_editable_list
 
 # Size templates
 app = ctk.CTk()

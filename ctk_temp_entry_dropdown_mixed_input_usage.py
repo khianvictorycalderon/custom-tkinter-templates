@@ -1,6 +1,6 @@
 from tkinter import *
 import customtkinter as ctk
-from entry_dropdown_mixed_input import create_entry_dropdown
+from ctk_temp_entry_dropdown_mixed_input import create_entry_dropdown
 
 # Size templates
 app = ctk.CTk()

@@ -1,6 +1,6 @@
 from tkinter import *
 import customtkinter as ctk
-from centered_box import create_centered_box
+from ctk_temp_centered_box import create_centered_box
 
 # Size templates
 app = ctk.CTk()

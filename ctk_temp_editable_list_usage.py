@@ -1,6 +1,6 @@
 from tkinter import *
 import customtkinter as ctk
-from editable_list import create_editable_list
+from ctk_temp_editable_list import create_editable_list
 
 app = ctk.CTk()
 screen_width = app.winfo_screenwidth()

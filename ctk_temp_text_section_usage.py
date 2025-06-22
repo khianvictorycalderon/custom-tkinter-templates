@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import *
-from text_section import create_text_section
+from ctk_temp_text_section import create_text_section
 import webbrowser
 
 app = ctk.CTk()

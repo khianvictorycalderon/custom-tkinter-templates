@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import *
-from treeview import create_treeview
+from ctk_temp_treeview import create_treeview
 
 app = ctk.CTk()
 screen_width = app.winfo_screenwidth()

@@ -1,8 +1,8 @@
 from tkinter import *
 import customtkinter as ctk
 from tkinter import messagebox
-from dual_frame import create_dual_frame
-from entry_dropdown_multiple_buttons import create_entry_dropdown_multiple_buttons
+from ctk_temp_dual_frame import create_dual_frame
+from ctk_temp_entry_dropdown_multiple_buttons import create_entry_dropdown_multiple_buttons
 
 # Size templates
 app = ctk.CTk()

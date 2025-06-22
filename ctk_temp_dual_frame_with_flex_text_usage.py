@@ -1,7 +1,7 @@
 from tkinter import *
 import customtkinter as ctk
-from dual_frame import create_dual_frame
-from flex_text import create_flex_text
+from ctk_temp_dual_frame import create_dual_frame
+from ctk_temp_flex_text import create_flex_text
 
 # Size templates
 app = ctk.CTk()

@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import *
-from flex_text import create_flex_text
+from ctk_temp_flex_text import create_flex_text
 
 app = ctk.CTk()
 screen_width = app.winfo_screenwidth()

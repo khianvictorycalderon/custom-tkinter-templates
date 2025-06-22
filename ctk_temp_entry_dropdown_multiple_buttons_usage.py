@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import Tk, messagebox
-from entry_dropdown_multiple_buttons import create_entry_dropdown_multiple_buttons  # adjust if the function is in same file
+from ctk_temp_entry_dropdown_multiple_buttons import create_entry_dropdown_multiple_buttons  # adjust if the function is in same file
 
 app = ctk.CTk()
 app.geometry("600x400")
